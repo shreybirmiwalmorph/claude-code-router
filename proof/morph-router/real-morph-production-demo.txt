@@ -1,0 +1,67 @@
+== REAL Morph Model Router + production CCR custom router demo ==
+repo: /Users/shreybirmiwal/morph/copies/claude-code-router-morph
+
+$ git rev-parse --abbrev-ref HEAD
+docs/morph-router-claude-code-proof
+
+$ git log -1 --oneline
+d678712 docs: add Morph Model Router custom router example
+
+$ node --version && claude --version
+v20.20.2
+2.1.174 (Claude Code)
+
+$ ls -l dist/cli.js
+-rwxr-xr-x@ 1 shreybirmiwal  staff  2695611 Jun 12 10:45 dist/cli.js
+
+Safe CCR config summary, secrets omitted:
+{
+  "custom_router_path": "/tmp/ccr-real-morph-product.I8s3pv/.claude-code-router/morph-router.cjs",
+  "morph_router": {
+    "enabled": true,
+    "endpoint": "https://api.morphllm.com/v1/router/multimodel",
+    "allowed_providers": [
+      "openai",
+      "anthropic",
+      "deepseek"
+    ],
+    "provider_map": {
+      "openai": "openai",
+      "anthropic": "openai",
+      "deepseek": "openai"
+    },
+    "model_map": {
+      "deepseek:deepseek-v4-flash": "gpt-4.1-mini",
+      "anthropic:claude-sonnet-4-6": "gpt-4.1",
+      "anthropic:claude-opus-4-8": "gpt-4o",
+      "gpt-5.5": "gpt-4.1"
+    }
+  },
+  "provider": "openai",
+  "provider_models": [
+    "gpt-4.1-mini",
+    "gpt-4.1",
+    "gpt-4o"
+  ]
+}
+
+$ source /tmp/ccr-real-morph.env && source ~/.config/morph/secrets.env
+MORPH_API_KEY present; OPENAI_API_KEY present (values hidden)
+
+$ HOME="/tmp/ccr-real-morph-product.I8s3pv" node dist/cli.js start
+CCR live at http://127.0.0.1:35676/v1/messages
+
+$ claude chat 1: easy prompt through CCR
+2+2 = 4
+
+Routes after chat 1:
+Morph chose deepseek/deepseek-v4-flash difficulty=easy -> CCR route openai,gpt-4.1-mini
+
+$ claude chat 2: hard architecture prompt through CCR
+Implement a microservices architecture using a sharded message queue (e.g., Kafka) for task distribution. Use stateless agents with unique request IDs for idempotency and exponential backoff for retries. Apply cost controls via resource quotas and budgets. Enable observability through centralized logging and monitoring (e.g., Prometheus). Tradeoffs: increased complexity and maintenance overhead. Failure modes include queue overload and partial service outages, mitigated by dynamic scaling and circuit breakers.
+
+Routes after chat 2:
+Morph chose deepseek/deepseek-v4-flash difficulty=easy -> CCR route openai,gpt-4.1-mini
+Morph chose anthropic/claude-opus-4-8 difficulty=hard -> CCR route openai,gpt-4o
+
+DONE: real Morph dynamically routed two Claude Code chats through production CCR.
