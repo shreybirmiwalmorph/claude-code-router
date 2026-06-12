@@ -1,0 +1,42 @@
+== claude-code-router PR #1443: Morph Model Router custom router ==
+== Proof: real Claude Code CLI -> branch-built CCR -> Morph route -> provider ==
+
+$ git rev-parse --abbrev-ref HEAD
+docs/morph-router-claude-code-proof
+
+$ git log -1 --oneline
+d678712 docs: add Morph Model Router custom router example
+
+$ node --version
+v20.20.2
+
+$ claude --version
+2.1.174 (Claude Code)
+
+$ ls -l dist/cli.js
+-rwxr-xr-x@ 1 shreybirmiwal  staff  2695611 Jun 12 10:45 dist/cli.js
+
+$ node examples/morph-router-claude-code-smoke-test.cjs
+CCR Morph Model Router Claude Code acceptance test
+repo: /Users/shreybirmiwal/morph/copies/claude-code-router-morph
+temp HOME: /var/folders/ck/sz63sq8n54s51wwkjyxdl4c40000gn/T/ccr-claude-code-morph-DO9DtS
+
+$ HOME=<temp> node dist/cli.js start
+CCR dev endpoint: http://127.0.0.1:56329/v1/messages
+mock Morph endpoint: http://127.0.0.1:56327/v1/router/multimodel
+
+$ ANTHROPIC_BASE_URL=http://127.0.0.1:56329 ANTHROPIC_API_KEY=<test> claude --bare --print --output-format json --model claude-3-5-sonnet-20241022 --no-session-persistence --prompt-suggestions false ROUTE_ME call CCR through Claude Code and return the provider proof.
+
+Claude Code output:
+ROUTE_PROOF_OK provider_model=chosen-model
+
+Route proof:
+Morph calls: 2
+Morph input: ROUTE_ME call CCR through Claude Code and return the provider proof.
+Provider calls: 2
+Provider endpoint path: /v1/chat/completions
+Provider received model: chosen-model
+
+PASS Claude Code used branch-built CCR and routed to chosen-model
+
+== Done: Morph router picked openai/chosen-model and CCR delivered it ==
